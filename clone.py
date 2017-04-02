@@ -4,7 +4,8 @@ import numpy as np
 
 # Load data
 # data_path = './data/' # default sim data from Udacity
-data_path = '../simulator/training data/' # my sim data
+# data_path = '../simulator/training data/' # my sim data
+data_path = './training_data/'
 
 csv_file = data_path + 'driving_log.csv'
 lines = []
@@ -39,10 +40,7 @@ from keras.layers.convolutional import Conv2D
 
 model = Sequential()
 
-# model.add(Lambda(lambda x: (x/255.0)-0.5, input_shape=(160,320,3)))
-# model.add(Flatten())
-# model.add(Dense(1))
-
+model.add(Lambda(lambda x: (x/255.0)-0.5, input_shape=(160,320,3)))
 model.add(Conv2D(input_shape=(160,320,3),
                  nb_filter=6,
                  nb_row=5,
