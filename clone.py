@@ -1,56 +1,60 @@
 import csv
 import cv2
 import numpy as np
+
 # Load data
 # data_path = './data/' # default sim data from Udacity
-# data_path = '../simulator/training data/' # my sim data
-data_path = './training_data/'
-
+# data_path = '../Simulator/' # my sim data
+data_path = './training_data/' # AWS sim data
 csv_file = data_path + 'driving_log.csv'
-lines = []
+
+crop_hgt = 40
+steer_corr = 0.02 # [normalized +/-1.0] (+) right
+
+images=[]
+measurements = []
+
 with open(csv_file) as f:
   reader = csv.reader(f)
   next(reader) # skip 1st line
   for line in reader:
-    lines.append(line)
+    # center channel
+    steering_angle = float(line[3]) #steering angle
+#    if(np.abs(steering_angle)>0.1): 
+    if(1): 
+      source_path = line[0]
+      filename = source_path.split('/')[-1] #remove intermediate path
+      image_file = data_path + 'IMG/' + filename
+      image = cv2.imread(image_file, cv2.COLOR_BGR2RGB)[crop_hgt:]
+      images.append(image)
 
-crop_hgt = 40
-steer_corr = 0.3 # [normalized +/-1.0] (+) right
-images=[]
-measurements = []
-for line in lines:
-  # center channel
-  measurement = float(line[3]) #steering angle
-  if(measurement > .1 or np.random.rand()<.3): 
-    source_path = line[0]
-    filename = source_path.split('/')[-1] #remove intermediate path
-    image_file = data_path + 'IMG/' + filename
-    image = cv2.imread(image_file, cv2.COLOR_BGR2RGB)[crop_hgt:]
-    images.append(image)
+      measurements.append(steering_angle)
 
-    measurements.append(measurement)
+    # left channel
+    if(np.random.random()<.1):
+#    if(1):
+      source_path = line[1]
+      filename = source_path.split('/')[-1] #remove intermediate path
+      image_file = data_path + 'IMG/' + filename
+      image = cv2.imread(image_file, cv2.COLOR_BGR2RGB)[crop_hgt:]
+      images.append(image)
 
-  # left channel
-  if(np.random.rand()<.1):
-    source_path = line[1]
-    filename = source_path.split('/')[-1] #remove intermediate path
-    image_file = data_path + 'IMG/' + filename
-    image = cv2.imread(image_file, cv2.COLOR_BGR2RGB)[crop_hgt:]
-    images.append(image)
+      measurement = steering_angle + steer_corr #steering angle
+      measurement = min(measurement, 1.0)
+      measurements.append(measurement)
 
-    measurement = min(float(line[3]) + steer_corr,1) #steering angle
-    measurements.append(measurement)
+    # right channel
+    if(np.random.random()<.1):
+#    if(1):
+      source_path = line[2]
+      filename = source_path.split('/')[-1] #remove intermediate path
+      image_file = data_path + 'IMG/' + filename
+      image = cv2.imread(image_file, cv2.COLOR_BGR2RGB)[crop_hgt:]
+      images.append(image)
 
-  # right channel
-  if(np.random.rand()<.1):
-    source_path = line[2]
-    filename = source_path.split('/')[-1] #remove intermediate path
-    image_file = data_path + 'IMG/' + filename
-    image = cv2.imread(image_file, cv2.COLOR_BGR2RGB)[crop_hgt:]
-    images.append(image)
-
-    measurement = max(float(line[3]) - steer_corr,-1) #steering angle
-    measurements.append(measurement)
+      measurement = steering_angle - steer_corr #steering angle
+      measurement = max(measurement, -1.0)
+      measurements.append(measurement)
 
 X_train = np.array(images)
 y_train = np.array(measurements)
@@ -89,6 +93,7 @@ model.add(Conv2D(nb_filter=48,
 		 subsample=(2,2),
                  border_mode='valid',
                  activation='elu'))
+
 model.add(Conv2D(nb_filter=64,
                  nb_row=5,
                  nb_col=5,
