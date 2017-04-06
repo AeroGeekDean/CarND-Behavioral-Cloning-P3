@@ -1,6 +1,7 @@
 import csv
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Load data
 # data_path = './data/' # default sim data from Udacity
@@ -123,20 +124,39 @@ model.add(Dense(50, activation='elu', name='dense2'))
 model.add(Dense(10, activation='elu', name='dense3'))
 model.add(Dense(1, name='output'))
 
-print('Layer shapes:')
+from functools import reduce
+def prod(input):
+  return reduce(lambda x, y: x*y, input, 1)
+
+print('Layer input shapes:')
 for layer in model.layers:
   shape = layer.get_input_shape_at(0)
-  print(shape, layer.name)
+  print(layer.name, shape, ' = '+str(prod(shape[1:]))+' neurons', sep='\t')
+
 
 
 model.compile(loss='mse',
               optimizer='adam')
-model.fit(X_train, y_train,
-          validation_split=0.2,
-          shuffle=True,
-          nb_epoch=3,
-          batch_size=64)
+history_obj = model.fit(X_train, y_train,
+                        validation_split=0.2,
+                        shuffle=True,
+                        nb_epoch=3,
+                        batch_size=64)
 
 model.save('model.h5')
+
+### print the keys contained in the history object
+print('History object keys:')
+print(history_obj.history.keys())
+
+### plot the training and validation loss for each epoch
+plt.plot(history_obj.history['loss'])
+plt.plot(history_obj.history['val_loss'])
+plt.title('model mean squared error loss')
+plt.ylabel('mean squared error loss')
+plt.xlabel('epoch')
+plt.legend(['training set', 'validation set'], loc='upper right')
+plt.show()
+
 
 exit()
