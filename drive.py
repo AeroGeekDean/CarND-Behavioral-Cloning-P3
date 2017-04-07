@@ -16,6 +16,8 @@ from keras.models import load_model
 import h5py
 from keras import __version__ as keras_version
 
+import cv2
+
 sio = socketio.Server()
 app = Flask(__name__)
 model = None
@@ -44,7 +46,7 @@ class SimplePIController:
 
 
 controller = SimplePIController(0.1, 0.002)
-set_speed = 10 # cruise control speed
+set_speed = 15 # cruise control speed
 controller.set_desired(set_speed)
 
 
@@ -60,8 +62,11 @@ def telemetry(sid, data):
         # The current image from the center camera of the car
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
-        # crop_hgt = 40
-        image_array = np.asarray(image) #[crop_hgt:]
+        image_array = np.asarray(image)
+
+#       The following line is for gray scale model ONLY. Comment it out for color
+        image_array = cv2.cvtColor(image_array, cv2.COLOR_RGB2GRAY)[..., np.newaxis]
+
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
 
         throttle = controller.update(float(speed))
