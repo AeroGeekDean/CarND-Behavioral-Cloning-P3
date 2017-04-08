@@ -46,7 +46,7 @@ class SimplePIController:
 
 
 controller = SimplePIController(0.1, 0.002)
-set_speed = 15 # cruise control speed
+set_speed = 10 # cruise control speed
 controller.set_desired(set_speed)
 
 
@@ -65,7 +65,7 @@ def telemetry(sid, data):
         image_array = np.asarray(image)
 
 #       The following line is for gray scale model ONLY. Comment it out for color
-        image_array = cv2.cvtColor(image_array, cv2.COLOR_RGB2GRAY)[..., np.newaxis]
+        # image_array = cv2.cvtColor(image_array, cv2.COLOR_RGB2GRAY)[..., np.newaxis]
 
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
 
