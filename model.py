@@ -75,17 +75,17 @@ def generator(samples, batch_size=32):
                 angles.append(left_angle)
                 images.append(right_image)
                 angles.append(right_angle)
-            
+
             X_train_orig = np.array(images)
             y_train_orig = np.array(angles)
-            
+
             # create flipped image data as well
             X_train_flip = np.array(np.fliplr(images))
             y_train_flip =-np.array(angles)
-            
+
             X_train = np.concatenate((X_train_orig, X_train_flip), axis=0)
             y_train = np.concatenate((y_train_orig, y_train_flip), axis=0)
-            
+
             yield sklearn.utils.shuffle(X_train, y_train)
 
 # instantiate generators
@@ -106,7 +106,8 @@ imshape = image0.shape
 # http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf
 
 from keras.models import Sequential
-from keras.layers import Flatten, Dense, Lambda, MaxPooling2D, Dropout, Cropping2D
+from keras.layers import Flatten, Dense, Lambda
+from keras.layers import MaxPooling2D, Dropout, Cropping2D
 from keras.layers.convolutional import Conv2D
 
 model = Sequential()
