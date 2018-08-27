@@ -23,6 +23,8 @@ This README file describes how to output the video in the "Details About Files I
 
 Creating a Great Writeup
 ---
+[>MY WRITEUP<](https://github.com/AeroGeekDean/CarND-Behavioral-Cloning-P3)
+
 A great writeup should include the [rubric points](https://review.udacity.com/#!/rubrics/432/view) as well as your description of how you addressed each point.  You should include a detailed description of the code used (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
 
 All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
